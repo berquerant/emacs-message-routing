@@ -2,8 +2,8 @@
 
 set -ex
 
-apt update
-apt upgrade -y
-apt install emacs -y
+sudo apt update
+sudo apt upgrade -y
+sudo apt install emacs -y
 
 emacs --version
