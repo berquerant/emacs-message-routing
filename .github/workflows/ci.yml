@@ -10,13 +10,19 @@ jobs:
   build:
     timeout-minutes: 1
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        emacs-version:
+          - "27.1"
     steps:
       - name: Describe Github Event Path
         run: cat $GITHUB_EVENT_PATH
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install Emacs
-        run: .github/bin/install-emacs.sh
+      - name: Setup Emacs ${{ matrix.emacs-version }}
+        uses: purcell/setup-emacs@master
+        with:
+          version: ${{ matrix.emacs-version }}
       - name: Build
         run: emacs --batch --quick --directory . --eval "(progn (setq byte-compile-error-on-warn t) (batch-byte-compile))" *.el
       - name: Test
