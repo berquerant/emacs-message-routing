@@ -4,7 +4,7 @@
 ;; Maintainer: berquerant
 ;; Package-Requires: ((cl-lib "1.0"))
 ;; Created: 17 Dec 2022
-;; Version: 0.2.0
+;; Version: 0.2.1
 ;; Keywords: message
 ;; URL: https://github.com/berquerant/emacs-message-routing
 
@@ -79,17 +79,14 @@ then insert \"hello\" into \"*Messages*\" buffer."
   (cl-loop for x in buffer-name-list
            do (message-routing--insert-buffer x msg)))
 
-(defun message-routing--message-advice-override (orig-func &rest args)
+(defun message-routing--message-advice-around (orig-func &rest args)
   (let* ((msg (apply #'format args))
          (buffer-name-list (message-routing--select-buffer-name-list msg)))
     (if buffer-name-list (message-routing--insert-buffer-list buffer-name-list (concat msg "\n"))
       (apply orig-func (list msg)))))
 
 (defun message-routing--advice-add ()
-  (advice-add #'message :around #'message-routing--message-advice-override))
-
-(defun message-routing--advice-remove ()
-  (advice-remove #'message #'message-routing--message-advice-override))
+  (advice-add #'message :around #'message-routing--message-advice-around))
 
 ;;;###autoload
 (defun message-routing-setup ()
