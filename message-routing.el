@@ -4,7 +4,7 @@
 ;; Maintainer: berquerant
 ;; Package-Requires: ((cl-lib "1.0"))
 ;; Created: 17 Dec 2022
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; Keywords: message
 ;; URL: https://github.com/berquerant/emacs-message-routing
 
@@ -46,31 +46,43 @@ insert it into the buffer without inserting `*Messages*' buffer.
 
 e.g.
 
-  (setq message-routing-routes '((\"^tmp\" . \"*TmpBuf*\")))
+  (setq message-routing-routes '((\"^tmp-a\" . \"*TmpA*\")
+                                 (\"^tmp\" . \"*Tmp*\")))
+  (message \"tmp-a:hello\")
+
+then insert \"tmp-a:hello\" into \"*TmpA*\" buffer.
+
   (message \"tmp:hello\")
 
-then insert \"tmp:hello\" into \"*TmpBuf*\" buffer.
+then insert \"tmp:hello\" into \"*TmpA*\" and \"*Tmp*\" buffers.
 
   (message \"hello\")
 
 then insert \"hello\" into \"*Messages*\" buffer."
   :type '(alist :key-type string :value-type string)
-  :version "30.0.50")
+  :version "27.1")
 
-(defun message-routing--select-buffer-name (msg)
-  "Find `buffer-name' appropreate for MSG."
-  (cl-loop for x in message-routing-routes
+(defun message-routing--select-buffer-name-list-with-routes (msg routes)
+  (cl-loop for x in routes
            when (string-match-p (car x) msg)
-           return (cdr x)))
+           collect (cdr x)))
+
+(defun message-routing--select-buffer-name-list (msg)
+  "Find `buffer-name' appropreate for MSG."
+  (message-routing--select-buffer-name-list-with-routes msg message-routing-routes))
 
 (defun message-routing--insert-buffer (buffer-name msg)
   (with-current-buffer (get-buffer-create buffer-name)
     (insert msg)))
 
+(defun message-routing--insert-buffer-list (buffer-name-list msg)
+  (cl-loop for x in buffer-name-list
+           do (message-routing--insert-buffer x msg)))
+
 (defun message-routing--message-advice-override (orig-func &rest args)
   (let* ((msg (apply #'format args))
-         (buffer-name (message-routing--select-buffer-name msg)))
-    (if buffer-name (message-routing--insert-buffer buffer-name (concat msg "\n"))
+         (buffer-name-list (message-routing--select-buffer-name-list msg)))
+    (if buffer-name-list (message-routing--insert-buffer-list buffer-name-list (concat msg "\n"))
       (apply orig-func (list msg)))))
 
 (defun message-routing--advice-add ()

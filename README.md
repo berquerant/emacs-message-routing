@@ -5,8 +5,9 @@ Route messages to buffer.
 # Usage
 
 ``` emacs-lisp
-(setq message-routing-routes '(("^tmp" . "*TmpBuf*")))
+(setq message-routing-routes '(("^tmp" . "*Tmp*") ("^tmp-a" . "*TmpA*")))
 (message-routing-setup)
-(message "tmp:hello") ; insert "tmp:hello" into *TmpBuf* buffer
-(message "hello") ; insert "hello" into *Messages* buffer
+(message "tmp-a:hello") ; insert into *TmpA* buffer
+(message "tmp:hello") ; insert *Tmp* and *TmpA* buffers
+(message "hello") ; insert into *Messages* buffer
 ```
