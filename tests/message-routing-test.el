@@ -18,7 +18,7 @@
                          ,routes)))))))
 
 (test-message-routing--select-buffer-name-list-with-routes "nil-routes" nil "message" nil)
-(test-message-routing--select-buffer-name-list-with-routes "nil-message" nil "" '(("^z" . "*Z*")))
+(test-message-routing--select-buffer-name-list-with-routes "empty-message" nil "" '(("^z" . "*Z*")))
 (test-message-routing--select-buffer-name-list-with-routes "matched-1" '("*Z*") "zero" '(("^z" . "*Z*")))
 (test-message-routing--select-buffer-name-list-with-routes "not-matched" nil "zero" '(("^a" . "*A*")))
 (test-message-routing--select-buffer-name-list-with-routes "matched-2"
@@ -30,6 +30,9 @@
                                                            "aart" '(("^a" . "*A*")
                                                                     ("^z" . "*Z*")
                                                                     ("^aa" . "*AA*")))
+
+(ert-deftest test-message-routing--message-advice-around-nil-ignored ()
+  (message-routing--message-advice-around #'message nil))
 
 (provide 'message-routing-test)
 ;;; message-routing-test.el ends here

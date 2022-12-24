@@ -4,7 +4,7 @@
 ;; Maintainer: berquerant
 ;; Package-Requires: ((cl-lib "1.0"))
 ;; Created: 17 Dec 2022
-;; Version: 0.2.1
+;; Version: 0.2.2
 ;; Keywords: message
 ;; URL: https://github.com/berquerant/emacs-message-routing
 
@@ -50,11 +50,11 @@ e.g.
                                  (\"^tmp\" . \"*Tmp*\")))
   (message \"tmp-a:hello\")
 
-then insert \"tmp-a:hello\" into \"*TmpA*\" buffer.
+then insert \"tmp-a:hello\" into \"*TmpA*\" and \"*Tmp*\" buffers.
 
   (message \"tmp:hello\")
 
-then insert \"tmp:hello\" into \"*TmpA*\" and \"*Tmp*\" buffers.
+then insert \"tmp:hello\" into \"*TmpA*\" buffer.
 
   (message \"hello\")
 
@@ -80,10 +80,11 @@ then insert \"hello\" into \"*Messages*\" buffer."
            do (message-routing--insert-buffer x msg)))
 
 (defun message-routing--message-advice-around (orig-func &rest args)
-  (let* ((msg (apply #'format args))
-         (buffer-name-list (message-routing--select-buffer-name-list msg)))
-    (if buffer-name-list (message-routing--insert-buffer-list buffer-name-list (concat msg "\n"))
-      (apply orig-func (list msg)))))
+  (ignore-errors
+    (let* ((msg (apply #'format args))
+           (buffer-name-list (message-routing--select-buffer-name-list msg)))
+      (if buffer-name-list (message-routing--insert-buffer-list buffer-name-list (concat msg "\n"))
+        (apply orig-func (list msg))))))
 
 (defun message-routing--advice-add ()
   (advice-add #'message :around #'message-routing--message-advice-around))
