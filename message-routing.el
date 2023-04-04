@@ -4,7 +4,7 @@
 ;; Maintainer: berquerant
 ;; Package-Requires: ((cl-lib "1.0"))
 ;; Created: 17 Dec 2022
-;; Version: 0.2.2
+;; Version: 0.2.3
 ;; Keywords: message
 ;; URL: https://github.com/berquerant/emacs-message-routing
 
@@ -73,6 +73,7 @@ then insert \"hello\" into \"*Messages*\" buffer."
 
 (defun message-routing--insert-buffer (buffer-name msg)
   (with-current-buffer (get-buffer-create buffer-name)
+    (goto-char (point-max))
     (insert msg)))
 
 (defun message-routing--insert-buffer-list (buffer-name-list msg)
