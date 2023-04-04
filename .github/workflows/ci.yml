@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -15,8 +18,6 @@ jobs:
         emacs-version:
           - "27.1"
     steps:
-      - name: Describe Github Event Path
-        run: cat $GITHUB_EVENT_PATH
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Emacs ${{ matrix.emacs-version }}
