@@ -8,10 +8,12 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   build:
-    timeout-minutes: 1
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     strategy:
       matrix:
